@@ -20,7 +20,9 @@ library(shinyBS)
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Upload Data", tabName = "dashboard", icon = icon("file")),
-    menuItem("Alpha Diversity", icon = icon("chart-scatter"), tabName = "alpha-div")
+    menuItem("Alpha Diversity", icon = icon("chart-scatter"), tabName = "alpha-div"),
+    menuItem("Beta Diversity", icon = icon("chart-scatter"), tabName = "beta-div"),
+    menuItem("Relative and Absolute Abundance", icon = icon("Graph"), tabName = "abundance")
   )
 )
 
@@ -57,18 +59,58 @@ body <- dashboardBody(
     
     tabItem(tabName = "alpha-div",
             h2("Alpha Diversity Graphs"),
-            h3("Healthy Samples"),
+            br(),
             fluidRow(
-              box(),
-              box()
+              box(width = 10,title = "Healthy Samples", solidHeader = TRUE, plotOutput("richnessH"))
+            ),
+            br(),
+            fluidRow(
+              box(width = 10,title = "Schizophrenic Samples", solidHeader = TRUE,plotOutput("richnessS"))
+            )
+            
+    ),
+    tabItem(tabName = "beta-div",
+            h2("Beta Diversity Graphs"),
+            br(),
+            fluidRow(
+              box(selectInput("distance", "Distance:",
+                              c("Manhattan" = "manhattan",
+                                "Euclidean" = "euclidean",
+                                "Canberra" = "canberra",
+                                "Bray" = "bray",
+                                "Horn" = "horn",
+                                "Binomial" = "binomial"))),
+              box(selectInput("method", "Method:",
+                              c("DCA" = "DCA",
+                                "CCA" = "CCA",
+                                "RDA" = "RDA",
+                                "CAP" = "CAP",
+                                "DPCoA" = "DPCoA",
+                                "NMDS" = "NMDS")))
+            ),
+            fluidRow(
+              box(title = "Healthy Samples", width = 12, plotOutput("betaH")),
+              box(title = "Schizophrenic Samples", width = 12, plotOutput("betaS"))
+              
+            )
+            ),
+    tabItem(tabName = "abundance",
+            h2("Relative and Absolute Abundance"),
+            br(),
+            fluidRow(box(sliderInput("abundance", "Percentage of Relative Abundance to Filter", value = 0.5, min = 0, max = 1))),
+              h3("Healthy Samples"),
+            fluidRow(
+              box(title = "Absolute Abundance", width = 12, plotOutput("aah"))),
+            fluidRow(
+              box(title = "Relative Abundance", width = 12, plotOutput("arh"))
             ),
             h3("Schizophrenic Samples"),
             fluidRow(
-              box(),
-              box()
+              box(title = "Absolute Abundance", width = 12, plotOutput("aas"))),
+            fluidRow(
+              box(title = "Relative Abundance", width = 12, plotOutput("ars"))
             )
-            
-    )
+            )
   )
 )
 
